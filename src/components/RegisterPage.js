@@ -18,6 +18,7 @@ const RegisterPage = () => {
       email: form.email,
       phone: form.phone,
       address: form.address,
+      password: form.password
     });
   if (response.status === 200) {
     router.push("/login");

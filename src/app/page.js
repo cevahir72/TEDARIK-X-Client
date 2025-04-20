@@ -6,25 +6,25 @@ export default function Home() {
     {
       id: 1,
       name: "Fındık",
-      price: "₺100,00",
+      price: 1000,
       image: "https://ideacdn.net/idea/in/11/myassets/products/092/findik-ici-700x700.jpg?revision=1734252148",
     },
     {
       id: 2,
       name: "Ceviz",
-      price: "₺150,00",
+      price: 1300,
       image: "https://kayisichi.com/Resim/Minik/1500x1500_thumb_40.png",
     },
     {
       id: 3,
       name: "Badem",
-      price: "₺200,00",
+      price: 1500,
       image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSiS4-uBVPeQgQzxs6qGYOGd3MmeSMpZIjeLA&s",
     },
     {
       id: 4,
       name: "Hurma",
-      price: "₺250,00",
+      price: 1600,
       image: "https://percdn.com/f/639966/cG96WmFtNG0vcUp3SzJGdEg4MXZKZWxESUE9PQ/p/kudus-hurma-500-gr-40441325-sw375sh375.webp",
     },
   ];
@@ -96,7 +96,7 @@ export default function Home() {
                   style={{ width: "100%", borderRadius: "8px", marginBottom: "10px" }} 
                 />
                 <p style={{ fontWeight: "600" }}>{product.name}</p>
-                <p style={{ color: "#D4C9BE", fontWeight: "500" }}>{product.price}</p>
+                <p style={{ color: "black" }}>{product.price}₺</p>
                 <button 
                   style={{
                     backgroundColor: "#123458", 
