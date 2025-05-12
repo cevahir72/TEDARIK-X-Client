@@ -59,7 +59,7 @@ const ProfilePage = () => {
                 <ul style={{ listStyleType: "disc", paddingLeft: "20px", marginTop: "10px" }}>
                   {order.OrderItems.map((item) => (
                     <li key={item.id} style={{ fontSize: "16px", color: "#555" }}>
-                      {item.Product.name} - {item.quantity} adet
+                      {item?.Product?.name} - {item?.quantity} adet
                     </li>
                   ))}
                 </ul>

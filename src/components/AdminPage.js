@@ -13,6 +13,7 @@ const AdminPage = () => {
   const [modalType, setModalType] = useState(null); // Order, Product, Customer
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [cat, setCat] = useState([]);
 
   const fetchData = async () => {
     try {
@@ -28,6 +29,10 @@ const AdminPage = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/products`
       );
       setProducts(productsRes.data);
+      const categoryRes = await api.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin/category`
+      );
+      setCat(categoryRes.data)
     } catch (error) {
       console.error("Error fetching admin data", error);
     }
@@ -114,7 +119,7 @@ const AdminPage = () => {
         }}
       >
         <button
-          onClick={() => handleAdd("Order")}
+          onClick={() => handleAdd("Category")}
           style={{
             padding: "10px 20px",
             backgroundColor: "#123458",
@@ -125,7 +130,7 @@ const AdminPage = () => {
             fontSize: "16px",
           }}
         >
-          Yeni Sipariş
+          Yeni Kategori
         </button>
         <button
           onClick={() => handleAdd("Product")}
@@ -141,7 +146,7 @@ const AdminPage = () => {
         >
           Yeni Ürün
         </button>
-        <button
+        {/* <button
           onClick={() => handleAdd("Customer")}
           style={{
             padding: "10px 20px",
@@ -154,9 +159,33 @@ const AdminPage = () => {
           }}
         >
           Yeni Müşteri
-        </button>
+        </button> */}
       </div>
-
+     <h2 style={{ fontSize: "24px", color: "#123458", marginBottom:"10px" }}>Kategoriler</h2>
+     <div
+        style={{
+          display: "flex",
+          justifyContent: "start",
+          gap: "20px",
+          marginBottom: "40px",
+        }}
+      >
+      {cat && cat.length > 0 && cat.map((item)=> (
+         <button
+           key={item.id}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#123458",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            fontSize: "16px",
+          }}
+        >
+          {item.name || "-"}
+        </button>
+        ))}
+      </div>
       <div style={{ marginBottom: "40px" }}>
         <h2 style={{ fontSize: "24px", color: "#123458" }}>Siparişler</h2>
         <table
@@ -283,22 +312,22 @@ const AdminPage = () => {
                       </button>
                     </div>
                   </td>
-                  <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+                  <td style={{ padding: "10px", border: "1px solid #ddd", color:"gray" }}>
                     {order.id}
                   </td>
-                  <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+                  <td style={{ padding: "10px", border: "1px solid #ddd", color:"gray" }}>
                     {order.User?.name}
                   </td>
-                  <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+                  <td style={{ padding: "10px", border: "1px solid #ddd", color:"gray" }}>
                     {new Date(order.orderDate).toLocaleDateString()}
                   </td>
-                  <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+                  <td style={{ padding: "10px", border: "1px solid #ddd", color:"gray" }}>
                     {order.address}
                   </td>
-                  <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+                  <td style={{ padding: "10px", border: "1px solid #ddd", color:"gray" }}>
                     {order.orderStatus}
                   </td>
-                  <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+                  <td style={{ padding: "10px", border: "1px solid #ddd", color:"gray" }}>
                     {order.totalPrice}
                   </td>
                 </tr>
@@ -361,16 +390,16 @@ const AdminPage = () => {
           <tbody>
             {customers.map((customer) => (
               <tr key={customer.id}>
-                <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+                <td style={{ padding: "10px", border: "1px solid #ddd", color:"gray" }}>
                   {customer.name}
                 </td>
-                <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+                <td style={{ padding: "10px", border: "1px solid #ddd", color:"gray" }}>
                   {customer.email}
                 </td>
-                <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+                <td style={{ padding: "10px", border: "1px solid #ddd", color:"gray" }}>
                   {customer.phone}
                 </td>
-                <td style={{ padding: "10px", border: "1px solid #ddd" }}>
+                <td style={{ padding: "10px", border: "1px solid #ddd", color:"gray" }}>
                   {customer.address}
                 </td>
               </tr>
@@ -479,7 +508,7 @@ const AdminPage = () => {
                   style={{
                     textAlign: "center",
                     padding: "10px",
-                    border: "1px solid #ddd",
+                    border: "1px solid #ddd" , color:"gray",
                   }}
                 >
                   {product.name}
@@ -488,7 +517,7 @@ const AdminPage = () => {
                   style={{
                     textAlign: "center",
                     padding: "10px",
-                    border: "1px solid #ddd",
+                    border: "1px solid #ddd" , color:"gray",
                   }}
                 >
                   {product.price}
@@ -497,7 +526,7 @@ const AdminPage = () => {
                   style={{
                     textAlign: "center",
                     padding: "10px",
-                    border: "1px solid #ddd",
+                    border: "1px solid #ddd" , color:"gray",
                   }}
                 >
                   {product.description}
@@ -506,7 +535,7 @@ const AdminPage = () => {
                   style={{
                     textAlign: "center",
                     padding: "10px",
-                    border: "1px solid #ddd",
+                    border: "1px solid #ddd" , color:"gray",
                   }}
                 >
                   {product.stock}
@@ -516,7 +545,7 @@ const AdminPage = () => {
                     display: "flex",
                     justifyContent: "center",
                     padding: "10px",
-                    border: "1px solid #ddd",
+                    border: "1px solid #ddd" , color:"gray",
                   }}
                 >
                   <img src={product.imageUrl} alt="ürün" width={50} />

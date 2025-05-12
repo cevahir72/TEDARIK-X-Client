@@ -1,13 +1,28 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
-import axios from 'axios';
 import { api } from '@/hooks/Api';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
+
   const [search, setSearch] = useState('');
   const { addToCart } = useCart();
+  const [categories, setCategories] = useState([]);
+  const [categoryId, setCategoryId] = useState("");
+
+ const handleChange = (e) => {
+    setCategoryId(e.target.value);
+  };
+
+  const inputStyles = {
+    padding: "10px",
+    width: "80%",
+    border: "1px solid #123458",
+    borderRadius: "5px",
+    marginRight: "10px",
+    color:"gray"
+  };
 
   useEffect(() => {
     // API'den ürünleri çekmek
@@ -16,11 +31,17 @@ export default function ProductsPage() {
         setProducts(response.data);
       })
       .catch(error => console.log(error));
+
+    api.get('/admin/category')
+        .then((resp)=> {
+     setCategories(resp.data)
+     }).catch(error=> console.log(error))
+
   }, []);
 
   // Arama fonksiyonu
   const handleSearch = () => {
-    api.get(`/products?search=${search}`) // Arama query'sini API'ye gönder
+    api.get(`/products?search=${search}&categoryId=${categoryId}`) // Arama query'sini API'ye gönder
       .then(response => setProducts(response.data))
       .catch(error => console.log(error));
   };
@@ -28,7 +49,22 @@ export default function ProductsPage() {
   return (
     <div style={{ padding: '20px', backgroundColor: '#F1EFEC' }}>
       {/* Arama Çubuğu */}
-      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+      <div style={{ marginBottom: '20px', textAlign: 'center', display:"flex" }}>
+        <select
+              name="categoryId"
+              style={inputStyles}
+              value={categoryId}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            >
+              <option value="">Kategori Seç</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+
         <input
           type="text"
           value={search}
@@ -40,6 +76,7 @@ export default function ProductsPage() {
             border: '1px solid #123458',
             borderRadius: '5px',
             marginRight: '10px',
+            color:"gray"
           }}
         />
         <button

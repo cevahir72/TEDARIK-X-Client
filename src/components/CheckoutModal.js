@@ -7,14 +7,14 @@ import { useAuth } from "@/context/AuthContext";
 
 const CheckoutModal = ({ closeModal }) => {
   const { cart, getCartDetails,flushCart } = useCart();
+  const [cardOwner, setCardOwner] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cvc, setCvc] = useState("");
   const [selectedCard, setSelectedCard] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
  
-
-  const handleCardSelect = (cardId) => {
-    setSelectedCard(cardId);
-  };
+  const isFormValid = cardOwner && cardNumber && cvc;
 
   const handleCompleteOrder = async () => {
     setIsSubmitting(true);
@@ -44,128 +44,85 @@ const CheckoutModal = ({ closeModal }) => {
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: "rgba(0,0,0,0.5)",
+    <div style={{
+      position: "fixed",
+      top: 0, left: 0, right: 0, bottom: 0,
+      backgroundColor: "rgba(0,0,0,0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000,
+    }}>
+      <div style={{
+        backgroundColor: "white",
+        padding: "30px",
+        borderRadius: "12px",
+        width: "800px",
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 1000,
-      }}
-    >
-      <div
-        style={{
-          backgroundColor: "white",
-          padding: "30px",
-          borderRadius: "12px",
-          width: "400px",
-          textAlign: "center",
-          position: "relative",
-        }}
-      >
-        <h2>Siparişi Tamamla</h2>
+        gap: "30px",
+        position: "relative"
+      }}>
+        {/* LEFT - FORM */}
+        <div style={{ flex: 1 }}>
+          <h2>Ödeme Bilgileri</h2>
+          <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginTop: "20px" }}>
+            <input
+              type="text"
+              placeholder="Kart Sahibi"
+              value={cardOwner}
+              onChange={(e) => setCardOwner(e.target.value)}
+              style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "6px" }}
+            />
+            <input
+              type="text"
+              placeholder="Kart Numarası"
+              value={cardNumber}
+              onChange={(e) => setCardNumber(e.target.value)}
+              style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "6px" }}
+            />
+            <input
+              type="text"
+              placeholder="CVC"
+              value={cvc}
+              onChange={(e) => setCvc(e.target.value)}
+              style={{ padding: "10px", border: "1px solid #ccc", borderRadius: "6px" }}
+            />
+          </div>
 
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-            marginTop: "20px",
-          }}
-        >
-          {[1, 2, 3].map((card) => (
-            <div
-              key={card}
-              onClick={() => handleCardSelect(card)}
-              style={{
-                background:
-                  selectedCard === card
-                    ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                    : "linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)",
-                color: "white",
-                borderRadius: "16px",
-                padding: "20px",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-                transform: selectedCard === card ? "scale(1.05)" : "scale(1)",
-                transition: "all 0.3s ease",
-                cursor: "pointer",
-                position: "relative",
-              }}
-            >
-              <div
-                style={{ fontSize: "14px", opacity: 0.8, marginBottom: "10px" }}
-              >
-                Kredi Kartı {card}
-              </div>
-
-              <div
-                style={{
-                  fontSize: "20px",
-                  letterSpacing: "2px",
-                  marginBottom: "20px",
-                  fontWeight: "bold",
-                }}
-              >
-                1234 5678 9012 345{card}
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontSize: "14px",
-                  opacity: 0.9,
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: "10px" }}>Kart Sahibi</div>
-                  <div>John Doe</div>
-                </div>
-
-                <div>
-                  <div style={{ fontSize: "10px" }}>Son Kullanma</div>
-                  <div>12/2{card}</div>
-                </div>
-              </div>
-
-              {/* Chip ikonu */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: "20px",
-                  left: "20px",
-                  width: "40px",
-                  height: "30px",
-                  backgroundColor: "gold",
-                  borderRadius: "6px",
-                  boxShadow: "inset 0 0 5px rgba(0,0,0,0.5)",
-                }}
-              />
-            </div>
-          ))}
+          <button
+            onClick={handleCompleteOrder}
+            disabled={!isFormValid || isSubmitting}
+            style={{
+              marginTop: "20px",
+              padding: "10px 20px",
+              backgroundColor: isFormValid ? "#28a745" : "#ccc",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              cursor: isFormValid ? "pointer" : "not-allowed",
+              fontSize: "16px",
+            }}
+          >
+            {isSubmitting ? "Gönderiliyor..." : "Siparişi Tamamla"}
+          </button>
         </div>
 
-        <button
-          onClick={handleCompleteOrder}
-          disabled={!selectedCard || isSubmitting}
-          style={{
-            marginTop: "20px",
-            padding: "10px 20px",
-            backgroundColor: selectedCard ? "#28a745" : "#ccc",
+        {/* RIGHT - CARD PREVIEW */}
+        <div style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <div style={{
+            background: "linear-gradient(to right, #0070f3, #0051a3)",
+            padding: "30px",
+            borderRadius: "12px",
+            width: "100%",
             color: "white",
-            border: "none",
-            borderRadius: "8px",
-            cursor: selectedCard ? "pointer" : "not-allowed",
-            fontSize: "16px",
-          }}
-        >
-          {isSubmitting ? "Gönderiliyor..." : "Siparişi Tamamla"}
-        </button>
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+          }}>
+            <h3>Kredi Kartı</h3>
+            <p style={{ fontSize: "18px", margin: "10px 0" }}>{cardNumber || "•••• •••• •••• ••••"}</p>
+            <p>Kart Sahibi: {cardOwner || "Ad Soyad"}</p>
+            <p>CVC: {cvc || "•••"}</p>
+          </div>
+        </div>
 
         <button
           onClick={closeModal}

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 const Modal = ({ type, closeModal, refreshData }) => {
@@ -51,11 +51,24 @@ const Modal = ({ type, closeModal, refreshData }) => {
     border: "1px solid #ddd",
     borderRadius: "5px",
     fontSize: "16px",
+    color:"gray"
   };
 
   const buttonStyles = {
     padding: "10px 20px",
     backgroundColor: "#123458",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    fontSize: "16px",
+    width: "100%",
+    marginTop: "10px",
+  };
+
+const buttonStylesx = {
+    padding: "10px 20px",
+    backgroundColor: "salmon",
     color: "white",
     border: "none",
     borderRadius: "5px",
@@ -76,18 +89,25 @@ const Modal = ({ type, closeModal, refreshData }) => {
     imageUrl: "",
     orderDate: "",
     orderAddress: "",
+    categoryId: "", 
+    categoryName: ""
   });
+
+  const [categories, setCategories] = useState([]);
+
+  const fetchData = async () => {
+    if (type === "Product") {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/admin/category`);
+      setCategories(res.data);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (type === "Order") {
-        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/admin/orders`, {
-          totalPrice: formData.price,
-          orderStatus: "Pending",
-          orderDate: formData.orderDate,
-          address: formData.orderAddress,
-          // Müşteri bağlantısı vs backendde handle edilmeli
+      if (type === "Category") {
+        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/admin/category`, {
+          categoryName: formData.categoryName,
         });
       } else if (type === "Product") {
         await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
@@ -96,6 +116,7 @@ const Modal = ({ type, closeModal, refreshData }) => {
           description: formData.description,
           stock: formData.stock,
           imageUrl: formData.imageUrl,
+          CategoryId: formData.categoryId
         });
       } else if (type === "Customer") {
         await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/register`, {
@@ -112,6 +133,18 @@ const Modal = ({ type, closeModal, refreshData }) => {
     }
   };
 
+ const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+ useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
    <div style={modalStyles}>
     <div style={modalContentStyles}>
@@ -120,30 +153,14 @@ const Modal = ({ type, closeModal, refreshData }) => {
         </button>
         <h2 style={headerStyles}>{`Yeni ${type}`}</h2>
       <form onSubmit={handleSubmit}>
-        {type === "Order" && (
+        {type === "Category" && (
           <>
             <input
-              type="date"
-              placeholder="Sipariş Tarihi"
-              style={inputStyles}
-              onChange={(e) =>
-                setFormData({ ...formData, orderDate: e.target.value })
-              }
-            />
-            <input
               type="text"
-              placeholder="Adres"
+              placeholder="Kategori Adı"
               style={inputStyles}
               onChange={(e) =>
-                setFormData({ ...formData, orderAddress: e.target.value })
-              }
-            />
-            <input
-              type="number"
-              placeholder="Toplam Fiyat"
-              style={inputStyles}
-              onChange={(e) =>
-                setFormData({ ...formData, price: e.target.value })
+                setFormData({ ...formData, categoryName: e.target.value })
               }
             />
           </>
@@ -190,6 +207,20 @@ const Modal = ({ type, closeModal, refreshData }) => {
                 setFormData({ ...formData, imageUrl: e.target.value })
               }
             />
+            <select
+              name="categoryId"
+              style={inputStyles}
+              value={formData.categoryId}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            >
+              <option value="">Kategori Seç</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
           </>
         )}
 
@@ -232,6 +263,7 @@ const Modal = ({ type, closeModal, refreshData }) => {
 
         <button style={buttonStyles} type="submit">Kaydet</button>
       </form>
+        <button style={buttonStylesx} onClick={()=>closeModal()} >Kapat</button>
     </div>
     </div>
   );

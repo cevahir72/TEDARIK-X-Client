@@ -30,6 +30,7 @@ const CartPage = () => {
       style={{
         padding: "40px",
         fontFamily: "Quicksand, sans-serif",
+        color:"gray",
         backgroundColor: "#F1EFEC",
         minHeight: "100vh",
       }}

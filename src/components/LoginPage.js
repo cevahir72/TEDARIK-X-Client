@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/hooks/Api";
 import { useAuth } from "@/context/AuthContext";
@@ -7,8 +7,10 @@ import { useAuth } from "@/context/AuthContext";
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // 🔸 Yeni
   const router = useRouter();
-const { login } = useAuth();
+  const { login } = useAuth();
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -17,17 +19,19 @@ const { login } = useAuth();
         `${process.env.NEXT_PUBLIC_API_URL}/login`,
         { email, password }
       );
-      if (response.status === 200 && response.data.role === "admin") {
 
-        router.push("/admin"); // Admin yönlendirmesi
-        login(response.data)
-      } else {
+      if (response.status === 200 && response.data.role === "admin") {
+        router.push("/admin");
+        login(response.data);
+      } else if (response.status === 200 && response.data.role !== "admin") {
         router.push(`/profile`);
-        login(response.data)
+        login(response.data);
+      }else {
+        setErrorMessage("Hatalı kullanıcı adı veya şifre"); // 🔸 Yeni
       }
     } catch (error) {
       console.error("Login error", error);
-      alert("Login failed");
+      setErrorMessage("Hatalı kullanıcı adı veya şifre"); // 🔸 Yeni
     }
   };
 
@@ -35,7 +39,6 @@ const { login } = useAuth();
     <div
       style={{
         width: "500px",
-        // height: "300px",
         margin: "50px auto",
         padding: "20px",
         border: "1px solid #ccc",
@@ -54,7 +57,7 @@ const { login } = useAuth();
           placeholder="Email"
           value={email}
           required
-          style={{ padding: "10px", border:"1px solid #AAAA", borderRadius:"5px" }}
+          style={{ padding: "10px", border: "1px solid #AAAA", borderRadius: "5px" }}
         />
         <input
           onChange={(e) => setPassword(e.target.value)}
@@ -63,8 +66,20 @@ const { login } = useAuth();
           placeholder="Şifre"
           value={password}
           required
-          style={{ padding: "10px", border:"1px solid #AAAA", borderRadius:"5px", marginTop:"5px" }}
+          style={{
+            padding: "10px",
+            border: "1px solid #AAAA",
+            borderRadius: "5px",
+            marginTop: "5px",
+          }}
         />
+
+        {errorMessage && ( // 🔸 Yeni
+          <div style={{ color: "red", fontSize: "14px", marginTop: "5px" }}>
+            {errorMessage}
+          </div>
+        )}
+
         <button
           type="submit"
           style={{
@@ -72,7 +87,7 @@ const { login } = useAuth();
             backgroundColor: "#0070f3",
             color: "white",
             borderRadius: "4px",
-            marginTop:"5px",
+            marginTop: "5px",
             cursor: "pointer",
           }}
         >
